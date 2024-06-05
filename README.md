@@ -22,11 +22,13 @@ This project analyzes a dataset of user events from a cosmetics e-commerce websi
 
 # Duration to Next Event:
 A new column duration_to_next_event is added, which calculates the time in seconds until the next event for each user session. For the last event in a session, the value is set to 0.
+ ```python
 data['event_time'] = pd.to_datetime(data['event_time'])
 data['duration_to_next_event'] = abs((data.groupby('user_session')['event_time'].shift(-1) - data['event_time']).dt.seconds.fillna(0))
 
 # Funnel Number:
 A funnel is a sequence of sessions by the same user with no more than 5 days between sessions. The funnel_number column is added to indicate the funnel to which each session belongs.
+ ```python
 data = data.sort_values(['user_id', 'event_time'])
 data['days_diff'] = data.groupby('user_id')['event_time'].diff().dt.days
 new = data['days_diff'] > 5
@@ -35,6 +37,7 @@ data['funnel_number'] = data['funnel_number'].fillna(0)
 
 # Index in Funnel:
 The index_in_funnel column is added to indicate the session number within each funnel for a user.
+ ```python
 data = data.sort_values(['user_id', 'funnel_number', 'event_time'])
 data['temp'] = data.groupby(['user_id', 'funnel_number', 'user_session'])['user_session'].shift().ne(0).astype(int)
 data['index_in_funnel'] = data.groupby(['user_id' , 'funnel_number'])['temp'].cumsum()
@@ -87,7 +90,7 @@ events_by_session = data.groupby(['user_id', 'user_session']).apply(
 
 session_data = pd.merge(new_data, events_by_session , how = 'left', on = ['user_id', 'user_session'])
 
-#Conclusion
+# Conclusion
 This project demonstrates the use of pandas for data manipulation and regular expressions for data cleaning.
 It includes tasks such as calculating the duration to the next event, identifying user funnels, indexing sessions within funnels, cleaning price data, visualizing event types, and aggregating session-level data. 
 The resulting session_data DataFrame provides a comprehensive view of user sessions and their interactions with the e-commerce platform.
