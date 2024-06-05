@@ -1,4 +1,3 @@
-```markdown
 # Data Analysis on Cosmetics Transactions
 
 This project performs data analysis on a dataset containing cosmetic transaction events. The steps include data cleaning, feature engineering, and visualization.
